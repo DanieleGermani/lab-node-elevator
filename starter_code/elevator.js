@@ -21,8 +21,44 @@ class Elevator {
   }
 
   update() {
+    if (this.passengers.length > 0) {
+      if (this.floor < this.passengers[0].destinationFloor) {
+        this.floorUp();
+        this.passengers.forEach((elem, indexOf, arr) => {
+          if (elem.destinationFloor === this.floor && elem.direction === this.direction) {
+            this._passengersLeave(indexOf);
+          }
+        });
+        this.requests.forEach((elem, indexOf, arr) => {
+          if (elem.originFloor === this.floor && elem.direction === this.direction) {
+            this._passengersEnter(indexOf);
+          }
+        });
+      } else if (this.floor > this.passengers[0].destinationFloor) {
+        this.floorDown();
+        this.passengers.forEach((elem, indexOf, arr) => {
+          if (elem.destinationFloor === this.floor && elem.direction === this.direction) {
+            this._passengersLeave(indexOf);
+          }
+        });
+        this.requests.forEach((elem, indexOf, arr) => {
+          if (elem.originFloor === this.floor && elem.direction === this.direction) {
+            this._passengersEnter(indexOf);
+          }
+        });
+      }
+    } else {
+      if (this.requests.length > 0) {
+        if (this.floor < this.requests[0].originFloor) {
+          this.floorUp();
+        } else if (this.floor > this.requests[0].originFloor) {
+          this.floorDown();
+        } else {
+          this._passengersEnter(0);
+        }
+      }
+    }
     this.log();
-    this.floorDown();
   }
 
   _passengersEnter(indexOf) {
@@ -57,12 +93,7 @@ class Elevator {
   }
   log() {
     console.log(`Direction: ${this.direction} | Floor: ${this.floor}`);
-    console.log("Personas en espera:");
-    console.log(this.requests);
-    console.log(" has enter the elevator:");
-    console.log(this.passengers);
-    console.log("Los pasajeros depositados en destino son: ");
-    console.log(this.servedPassengers + "\n");
+    console.log(`direction: ${this.direction} | floor: ${this.floor} | passengers: ${this.passengers.length} | requests: ${this.requests.length}`);
   }
 }
 
